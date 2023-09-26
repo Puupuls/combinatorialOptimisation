@@ -27,3 +27,4 @@ class Solution:
     domain: Domain
     links: list[list[int]] = field(default_factory=list)
     cost: float = 0
+    cost_parts: dict[str, float] = field(default_factory=dict)

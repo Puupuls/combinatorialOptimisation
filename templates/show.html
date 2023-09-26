@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        svg{
+            width: 90vw;
+            height: 90vh;
+        }
+    </style>
+</head>
+<body>
+Cost: {{ solution.cost }} ({{ solution.cost_parts }})
+
+<svg
+        viewBox="{{ bounding_box[0]*50 - 20 }} {{ bounding_box[1]*50 - 20 }} {{ (bounding_box[2]-bounding_box[0])*50 + 40 }} {{ (bounding_box[3]-bounding_box[1])*50 + 40 }}"
+        {#        preserveAspectRatio="none"#}
+         xmlns="http://www.w3.org/2000/svg"
+>
+    <defs>
+        <marker
+                id="triangle"
+                viewBox="0 0 10 10"
+                refX="20"
+                refY="5"
+                markerUnits="strokeWidth"
+                markerWidth="10"
+                markerHeight="10"
+                orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#000" />
+        </marker>
+    </defs>
+
+    {% for p1 in range(solution.links|length) %}
+        {% for p2 in range(solution.links|length) %}
+            {% if solution.links[p1][p2] == 1 %}
+                <line
+                        id="{{ p1 }}_{{ p2 }}"
+                        stroke-width="1"
+                        stroke="black"
+                        x1="{{ solution.domain.points[p1].x*50 }}"
+                        y1="{{ solution.domain.points[p1].y*50 }}"
+                        x2="{{ solution.domain.points[p2].x*50 }}"
+                        y2="{{ solution.domain.points[p2].y*50 }}"
+                        marker-end="url(#triangle)"
+                ></line>
+                <text
+                    font-size="20"
+                    stroke="black"
+                >
+                    <textPath
+                            href="#{{ p1 }}_{{ p2 }}"
+                    >
+                        {{ solution.domain.distances[p1][p2] }}
+                    </textPath>
+                </text>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+
+    {% for p in solution.domain.points %}
+        <circle r="10" cx="{{ p.x*50 }}" cy="{{ p.y*50 }}" stroke="black"></circle>
+        <text fill="white" x="{{ p.x*50 - 5 }}" y="{{ p.y*50 + 6 }}" font-size="20">{{ loop.index0 }}</text>
+        <text fill="#999" x="{{ p.x*50 - 12 }}" y="{{ p.y*50 + 18 }}" font-size="8">{{ p.x }}, {{ p.y }} ({{ p.value }})</text>
+    {% endfor %}
+</svg>
+</body>
+</html>

@@ -22,6 +22,12 @@ domain.points.append(
 )
 domain.points.append(
     Point(
+        x=4,
+        y=-3,
+    )
+)
+domain.points.append(
+    Point(
         x=2,
         y=5,
     )
@@ -35,7 +41,7 @@ domain.points.append(
 domain.points.append(
     Point(
         x=8,
-        y=1,
+        y=3,
     )
 )
 domain.points.append(
@@ -50,7 +56,7 @@ def fill_distances(domain: Domain):
     domain.distances = [[0] * len(domain.points) for i in range(len(domain.points))]
     for i, point1 in enumerate(domain.points):
         for j, point2 in enumerate(domain.points):
-            dst = ((point1.x-point2.x)**2 + (point1.x-point2.x)**2) ** 0.5
+            dst = ((point1.x-point2.x)**2 + (point1.y-point2.y)**2) ** 0.5
             domain.distances[i][j] = dst
 
 
@@ -100,7 +106,14 @@ def evaluate_solution(solution: Solution):
     distance = np.sum(distances * route)
     overtime = min(0, solution.domain.time_limit - distance) * -1
 
-    solution.cost = distance + 5 * overtime
+    # Laika parsniegšana ir sliktāks pārkāpums kā gara distance
+    overtime = 2 * overtime
+    solution.cost = distance + overtime
+
+    solution.cost_parts = {
+        "distance": distance,
+        "overtime": overtime,
+    }
 
 
 def solve(domain: Domain) -> Solution:

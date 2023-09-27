@@ -1,4 +1,4 @@
-name: combinatorialOptimisation
+name: base
 channels:
   - defaults
   - anaconda
@@ -7,3 +7,4 @@ dependencies:
   - python=3.11
   - dataclasses-json
   - numpy
+  - flask

@@ -1,4 +1,6 @@
 # Risinājumam nepieciešamie datu tipi
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json
 
@@ -23,8 +25,19 @@ class Domain:
 
 @dataclass_json
 @dataclass
+class GraphNode:
+    point: Point
+    links: list[GraphNode] = field(default_factory=list)
+    is_shortest_path: bool = False
+
+
+@dataclass_json
+@dataclass
 class Solution:
     domain: Domain
+    graph: GraphNode = None
     links: list[list[int]] = field(default_factory=list)
     cost: float = 0
+    best_path_len: float = 0
+    best_path_steps: int = 0
     cost_parts: dict[str, float] = field(default_factory=dict)

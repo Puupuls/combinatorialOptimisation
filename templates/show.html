@@ -32,37 +32,16 @@ Cost: {{ solution.cost }} ({{ solution.cost_parts }})
         </marker>
     </defs>
 
-    {% for p1 in range(solution.links|length) %}
-        {% for p2 in range(solution.links|length) %}
-            {% if solution.links[p1][p2] == 1 %}
-                <line
-                        id="{{ p1 }}_{{ p2 }}"
-                        stroke-width="1"
-                        stroke="black"
-                        x1="{{ solution.domain.points[p1].x*50 }}"
-                        y1="{{ solution.domain.points[p1].y*50 }}"
-                        x2="{{ solution.domain.points[p2].x*50 }}"
-                        y2="{{ solution.domain.points[p2].y*50 }}"
-                        marker-end="url(#triangle)"
-                ></line>
-                <text
-                    font-size="20"
-                    stroke="black"
-                >
-                    <textPath
-                            href="#{{ p1 }}_{{ p2 }}"
-                    >
-                        {{ solution.domain.distances[p1][p2] }}
-                    </textPath>
-                </text>
-            {% endif %}
-        {% endfor %}
-    {% endfor %}
+    {% with %}
+        {% set node = solution.graph %}
+        {% set seen_nodes = [solution.graph] %}
+        {% include 'path.html' %}
+    {% endwith %}
 
     {% for p in solution.domain.points %}
         <circle r="10" cx="{{ p.x*50 }}" cy="{{ p.y*50 }}" stroke="black"></circle>
         <text fill="white" x="{{ p.x*50 - 5 }}" y="{{ p.y*50 + 6 }}" font-size="20">{{ loop.index0 }}</text>
-        <text fill="#999" x="{{ p.x*50 - 12 }}" y="{{ p.y*50 + 18 }}" font-size="8">{{ p.x }}, {{ p.y }} ({{ p.value }})</text>
+        <text fill="#eee" stroke="#333" stroke-width="0.5" x="{{ p.x*50 - 12 }}" y="{{ p.y*50 + 18 }}" font-size="8">{{ p.x }}, {{ p.y }} ({{ p.value }})</text>
     {% endfor %}
 </svg>
 </body>

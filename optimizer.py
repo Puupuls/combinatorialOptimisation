@@ -170,7 +170,9 @@ def evaluate_solution(solution: Solution):
     #   best_path_len --> 0 (Risinājums atrod īsāko ceļu)
     #   path_steps_score --> 0 (Risinājums iekļauj visus punktus)
 
-    solution.cost = overtime + wasted_distance + solution.best_path_len * (path_steps_score * 0.75)
+    # Reizinam best_path_len un path_steps_score lai nesodītu modeli par papildus punktu pielikšanu
+
+    solution.cost = overtime + wasted_distance + solution.best_path_len * (0.25 + path_steps_score * 0.75)
 
     solution.cost_parts = {
         "distance": distance,
@@ -179,7 +181,7 @@ def evaluate_solution(solution: Solution):
         "path_len": solution.best_path_len,
         "path_steps": solution.best_path_steps,
         "path_steps_score": path_steps_score,
-        "formula": f"{overtime} + {wasted_distance} + {solution.best_path_len} * ({path_steps_score} * 0.75)"
+        "formula": f"{overtime} + {wasted_distance} + {solution.best_path_len} * (0.25 + {path_steps_score} * 0.75)"
     }
 
 

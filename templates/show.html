@@ -44,5 +44,8 @@ Cost: {{ solution.cost }} ({{ solution.cost_parts }})
         <text fill="#eee" stroke="#333" stroke-width="0.5" x="{{ p.x*50 - 12 }}" y="{{ p.y*50 + 18 }}" font-size="8">{{ p.x }}, {{ p.y }} ({{ p.value }})</text>
     {% endfor %}
 </svg>
+<script>
+    {#let result = {{ solution | tojson }};#}
+</script>
 </body>
 </html>

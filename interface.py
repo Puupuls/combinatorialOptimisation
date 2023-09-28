@@ -1,5 +1,9 @@
+import json
+
 import flask
 from flask import Flask
+
+from my_types import Solution
 from optimizer import solution
 
 app = Flask(__name__)

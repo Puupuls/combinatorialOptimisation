@@ -185,15 +185,19 @@ def evaluate_solution(solution: Solution):
     }
 
 
-def solve(domain: Domain) -> Solution:
-    pass
+def solve(domain: Domain, save_path='') -> Domain:
+    fill_distances(domain)
+
+    solution = get_starting_solution(domain)
+    build_graph(solution)
+    evaluate_solution(solution)
+    domain.solutions.append(solution)
+
+    return domain
 
 
-fill_distances(domain)
+solution = solve(domain)
 
-solution = get_starting_solution(domain)
-build_graph(solution)
-evaluate_solution(solution)
 
 if __name__ == '__main__':
     print(domain.to_json(indent=4))

@@ -21,6 +21,7 @@ class Domain:
     time_limit = 10
     start_point_idx: int = 0
     finish_point_idx: int = 0
+    solutions: list[Solution] = field(default_factory=list)
 
 
 @dataclass_json

@@ -4,7 +4,7 @@ import flask
 from flask import Flask
 
 from my_types import Solution
-from optimizer import solution
+from optimizer import solution, domain
 
 app = Flask(__name__)
 
@@ -13,12 +13,13 @@ app = Flask(__name__)
 def hello_world():  # put application's code here
     return flask.render_template(
         'show.html',
+        domain=domain,
         solution=solution,
         bounding_box=[
-            min([p.x for p in solution.domain.points]),
-            min([p.y for p in solution.domain.points]),
-            max([p.x for p in solution.domain.points]),
-            max([p.y for p in solution.domain.points])
+            min([p.x for p in domain.points]),
+            min([p.y for p in domain.points]),
+            max([p.x for p in domain.points]),
+            max([p.y for p in domain.points])
         ]
     )
 

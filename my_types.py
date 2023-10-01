@@ -29,14 +29,11 @@ class Domain:
 class GraphNode:
     point: Point
     links: list[GraphNode] = field(default_factory=list)
-    is_shortest_path: bool = False
 
 
 @dataclass_json
 @dataclass
 class Solution:
-    domain: Domain
-    graph: GraphNode = None
     links: list[list[int]] = field(default_factory=list)
     cost: float = 0
     best_path_len: float = 0

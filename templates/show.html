@@ -11,12 +11,10 @@
     </style>
 </head>
 <body>
-Cost: {{ solution.cost }} ({{ solution.cost_parts }})
-
+<span id="cost"></span>
 <svg
-        viewBox="{{ bounding_box[0]*50 - 20 }} {{ bounding_box[1]*50 - 20 }} {{ (bounding_box[2]-bounding_box[0])*50 + 40 }} {{ (bounding_box[3]-bounding_box[1])*50 + 40 }}"
-        {#        preserveAspectRatio="none"#}
-         xmlns="http://www.w3.org/2000/svg"
+        id="graph"
+        xmlns="http://www.w3.org/2000/svg"
 >
     <defs>
         <marker
@@ -31,21 +29,82 @@ Cost: {{ solution.cost }} ({{ solution.cost_parts }})
             <path d="M 0 0 L 10 5 L 0 10 z" fill="#000" />
         </marker>
     </defs>
-
-    {% with %}
-        {% set node = solution.graph %}
-        {% set seen_nodes = [solution.graph] %}
-        {% include 'path.html' %}
-    {% endwith %}
-
-    {% for p in solution.domain.points %}
-        <circle r="10" cx="{{ p.x*50 }}" cy="{{ p.y*50 }}" stroke="black"></circle>
-        <text fill="white" x="{{ p.x*50 - 5 }}" y="{{ p.y*50 + 6 }}" font-size="20">{{ loop.index0 }}</text>
-        <text fill="#eee" stroke="#333" stroke-width="0.5" x="{{ p.x*50 - 12 }}" y="{{ p.y*50 + 18 }}" font-size="8">{{ p.x }}, {{ p.y }} ({{ p.value }})</text>
-    {% endfor %}
 </svg>
 <script>
-    {#let result = {{ solution | tojson }};#}
+    const SCALE = 50
+    const domain = JSON.parse(`{{ domain | tojson }}`);
+    const graph = document.getElementById('graph')
+
+    if(domain.solutions.length > 0){
+        let solution = domain.solutions[domain.solutions.length - 1]
+        renderSolution(solution, domain)
+    }
+    renderDomain(domain)
+
+    function renderDomain(domain) {
+        let xMin = Math.min(...domain.points.map(p => p.x))
+        let xMax = Math.max(...domain.points.map(p => p.x))
+        let yMin = Math.min(...domain.points.map(p => p.y))
+        let yMax = Math.max(...domain.points.map(p => p.y))
+        let width = xMax - xMin;
+        let height = yMax - yMin;
+        graph.setAttribute("viewBox", `${(xMin - width * 0.1) * SCALE} ${(yMin - height * 0.1) * SCALE} ${(width * 1.2) * SCALE} ${(height * 1.2) * SCALE}`)
+
+        for (let idx in domain.points) {
+            let p = domain.points[idx]
+            let circle = document.createElement("circle");
+            circle.setAttribute("r", 0.2 * SCALE);
+            circle.setAttribute("cx", p.x * SCALE);
+            circle.setAttribute("cy", p.y * SCALE);
+            circle.setAttribute("stroke", "black");
+            graph.appendChild(circle)
+
+
+            let idxText = document.createElement("text")
+            idxText.setAttribute("fill", "white")
+            idxText.innerText = idx
+            idxText.setAttribute("font-size", 0.35 * SCALE)
+            graph.appendChild(idxText)
+            idxText.setAttribute("x", p.x * SCALE - 0.35 * SCALE / 4)
+            idxText.setAttribute("y", p.y * SCALE + 0.35 * SCALE / 4)
+
+            let coordText = document.createElement("text")
+            coordText.innerText = `${p.x}, ${p.y} (${p.value})`
+            coordText.setAttribute("fill", "gray")
+            coordText.setAttribute("font-size", 0.2 * SCALE)
+            graph.appendChild(coordText)
+            coordText.setAttribute("x", p.x * SCALE - SCALE / 4)
+            coordText.setAttribute("y", p.y * SCALE + 0.35 * SCALE)
+        }
+        graph.innerHTML += ""
+    }
+
+    function renderSolution(solution, domain){
+        document.getElementById('cost').innerText = `Cost: ${solution.cost}`
+
+        let links = solution.links
+        let points = domain.points
+
+        for(let idx in links){
+            let startPoint = points[idx];
+            for(let trgIdx in links[idx]){
+                if(links[idx][trgIdx]>0) {
+                    let endPoint = points[trgIdx];
+
+                    let path = document.createElement('path')
+                    let dirX = endPoint.x - startPoint.x
+                    let dirY = endPoint.y - startPoint.y
+                    path.setAttribute("d", `M ${ startPoint.x*SCALE} ${startPoint.y*SCALE} C ${ startPoint.x*SCALE - dirX * SCALE * 0.15} ${startPoint.y*SCALE + dirY * SCALE * 0.15}  ${ endPoint.x*SCALE} ${endPoint.y*SCALE} ${ endPoint.x*SCALE} ${endPoint.y*SCALE}`)
+                    path.setAttribute('marker-end', "url(#triangle)")
+                    path.setAttribute('stroke-width', 1)
+                    path.setAttribute('stroke', links[idx][trgIdx] === 1? "red" : "green")
+                    path.setAttribute('fill', "none")
+                    graph.appendChild(path)
+                }
+            }
+        }
+        graph.innerHTML += ""
+    }
 </script>
 </body>
 </html>

@@ -62,9 +62,7 @@ class Optimizer:
         self.domain.distances = distances
 
     def get_starting_solution(self) -> Solution:
-        solution = Solution(
-            domain=self.domain
-        )
+        solution = Solution()
         solution.links = [[0] * len(self.domain.points) for i in range(len(self.domain.points))]
         cur_point = self.domain.start_point_idx
         seen_points = [cur_point]
@@ -90,6 +88,9 @@ class Optimizer:
             # Ja esam nonākuši finišā, un viss ir apmeklēts, tad beidzam
             if cur_point == self.domain.finish_point_idx:
                 break
+        # solution.links[2][3] = 1
+        # solution.links[3][2] = 1
+        # solution.links[5][1] = 1
         return solution
 
     def get_next_solutions(self, n: int) -> list[Solution]:
@@ -110,47 +111,53 @@ class Optimizer:
         def process_node(node: GraphNode):
             idx = self.domain.points.index(node.point)
             for i, l in enumerate(solution.links[idx]):
-                if l == 1:
+                if l > 0:
                     child_node = nodes[i]
                     node.links.append(child_node)
                     if len(child_node.links) == 0:
                         process_node(child_node)
 
         start_node: GraphNode = nodes[self.domain.start_point_idx]
-        solution.graph = start_node
         process_node(start_node)
 
-        def get_path_length(path: list[GraphNode]) -> float:
-            path_len = 0
-            for n1, n2 in zip(path[:-1], path[1:]):
-                idx1 = self.domain.points.index(n1.point)
-                idx2 = self.domain.points.index(n2.point)
-                path_len += self.domain.distances[idx1][idx2]
-            return path_len
-
-        def find_path(node: GraphNode, cur_path: list[GraphNode]) -> list[GraphNode]:
+        def find_path(node: GraphNode, cur_path: list[GraphNode], cur_dist) -> tuple[list[GraphNode], float]:
             if self.domain.points.index(node.point) == self.domain.finish_point_idx and len(cur_path):
-                return cur_path
-            cur_path.append(node)
+                return cur_path, cur_dist
+            if node not in cur_path:
+                cur_path.append(node)
 
-            best_path = []
-            for n in node.links:
-                path = find_path(
-                    n,
-                    cur_path[:]
-                )
-                if len(best_path) == 0 \
-                        or len(best_path) > len(path):
-                    best_path = path
+                best_path = []
+                best_dst = 0
+                for n in node.links:
+                    path, dst = find_path(
+                        n,
+                        cur_path[:],
+                        cur_dist + domain.distances[self.domain.points.index(node.point)][self.domain.points.index(n.point)]
+                    )
+                    if dst >= 0:
+                        if len(best_path) < len(path) or (len(best_path) == len(path) and best_dst > dst):
+                            best_path = path
+                            best_dst = dst
 
-            return best_path
+                return best_path, best_dst
+            else:
+                return [], -1
 
-        bpath = find_path(start_node, [])
+        best_path, best_dst = find_path(start_node, [], 0)
 
-        solution.best_path_steps = len(bpath)
-        solution.best_path_len = get_path_length(bpath)
-        for node in bpath:
-            node.is_shortest_path = True
+        solution.best_path_steps = len(best_path)
+        solution.best_path_len = best_dst
+
+        for i, node in enumerate(best_path):
+            point_idx = self.domain.points.index(node.point)
+
+            next = node.links[0]
+            if len(node.links) > 1:
+                for nnode in node.links:
+                    if self.domain.points.index(nnode.point) == domain.finish_point_idx or (len(best_path) > i+1 and nnode.point == best_path[i+1].point):
+                        next=nnode
+            next_idx = self.domain.points.index(next.point)
+            solution.links[point_idx][next_idx] = 2
 
     def evaluate_solution(self, solution: Solution):
         # Aprēķinam ceļa garumu un izmaksas
@@ -202,15 +209,6 @@ if __name__ == '__main__':
 
     for i, a in enumerate(solution.links):
         print(', '.join([str(j) for j in a]))
-        idx = a.index(1)
     print(solution.cost)
 
     visited_nodes = []
-    def print_graph(node: GraphNode):
-        for n in node.links:
-            print(f"{solution.domain.points.index(node.point)} --> {solution.domain.points.index(n.point)}")
-            if solution.domain.points.index(n.point) not in visited_nodes:
-                visited_nodes.append(solution.domain.points.index(n.point))
-                print_graph(n)
-
-    print_graph(solution.graph)

@@ -18,10 +18,11 @@ class Point:
 class Domain:
     points: list[Point] = field(default_factory=list)
     distances: list[list[int]] = field(default_factory=list)
-    time_limit = 10
+    time_limit = 1
     start_point_idx: int = 0
     finish_point_idx: int = 0
     solutions: list[Solution] = field(default_factory=list)
+    bad_solutions: list[Solution] = field(default_factory=list)
 
 
 @dataclass_json
@@ -38,4 +39,5 @@ class Solution:
     cost: float = 0
     best_path_len: float = 0
     best_path_steps: int = 0
+    best_path_value: float = 0
     cost_parts: dict[str, float] = field(default_factory=dict)

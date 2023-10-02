@@ -2,46 +2,114 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Kombinatoriālā optimizācija PP19026</title>
     <style>
         svg{
-            width: 90vw;
-            height: 90vh;
+            width: 100%;
+            max-height: 80dvh;
         }
     </style>
 </head>
-<body>
-<span id="cost"></span>
-<svg
-        id="graph"
-        xmlns="http://www.w3.org/2000/svg"
->
-    <defs>
-        <marker
-                id="triangle"
-                viewBox="0 0 10 10"
-                refX="20"
-                refY="5"
-                markerUnits="strokeWidth"
-                markerWidth="10"
-                markerHeight="10"
-                orient="auto">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#000" />
-        </marker>
-    </defs>
-</svg>
+<body style="height: 100dvh; max-width: 100dvw; display: flex; flex-direction: column;">
+<div style="display: flex;">
+    <div style="display: flex; flex:1; padding: 10px" id="cost_good">
+
+    </div>
+    <div style="display: flex; flex:1; padding: 10px" id="cost_bad">
+
+    </div>
+</div>
+
+<div style="display: flex; max-width: 100dvw; flex:1;">
+    <div style="display: flex; flex:1; padding: 10px; flex-direction: column">
+        <svg
+                id="graph_good"
+                xmlns="http://www.w3.org/2000/svg"
+        >
+        </svg>
+        <div style="width:100%; display: flex;"><input style="flex:1" type="range" min="0" max="0" value="0" step="1" oninput="onSolutionChange(this)" id="solutionSelectInput"/><span id="solutionSelectSpan">0</span></div>
+    </div>
+    <div style="display: flex; flex:1; padding: 10px">
+        <svg
+                id="graph_bad"
+                xmlns="http://www.w3.org/2000/svg"
+        >
+        </svg>
+    </div>
+</div>
+<div style="display: flex; justify-content: center; margin-bottom: 20px;">
+    <button onclick="playing=!playing; updateData(); this.innerText = playing? 'Pause' : 'Play'">Play</button>
+    <button onclick="!playing && updateData()" style="margin-left: 10px;">Step</button>
+</div>
 <script>
     const SCALE = 50
-    const domain = JSON.parse(`{{ domain | tojson }}`);
-    const graph = document.getElementById('graph')
+    const graph_good = document.getElementById('graph_good')
+    const graph_bad = document.getElementById('graph_bad')
 
-    if(domain.solutions.length > 0){
-        let solution = domain.solutions[domain.solutions.length - 1]
-        renderSolution(solution, domain)
+    let playing = false
+
+    let solutionIndex = 0
+    let solutionSelectInput = document.getElementById('solutionSelectInput')
+    let solutionSelectSpan = document.getElementById('solutionSelectSpan')
+    async function onSolutionChange(input){
+        solutionIndex = input.value
+        solutionSelectSpan.innerText = solutionIndex;
+        await render()
     }
-    renderDomain(domain)
 
-    function renderDomain(domain) {
+    let domain = null;
+    async function updateData() {
+        const response = await fetch('/data')
+        domain = await response.json()
+        await render()
+        if(playing)
+            setTimeout(updateData, 100)
+    }
+    async function render() {
+        graph_bad.innerHTML = graph_good.innerHTML =`
+            <defs>
+                <marker
+                        id="triangle"
+                        viewBox="0 0 10 10"
+                        refX="20"
+                        refY="5"
+                        markerUnits="strokeWidth"
+                        markerWidth="10"
+                        markerHeight="10"
+                        orient="auto">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#000" />
+                </marker>
+            </defs>
+        `;
+        if (domain.solutions.length > 0) {
+            let isMax = solutionSelectInput.value == solutionSelectInput.attributes.max.value
+            solutionSelectInput.setAttribute('max', domain.solutions.length - 1)
+            if(isMax || domain.solutions.length - 1 < solutionIndex){
+                solutionIndex = domain.solutions.length - 1;
+                solutionSelectInput.value = solutionIndex
+                solutionSelectSpan.innerText = solutionIndex;
+            }
+            let solution = domain.solutions[solutionIndex]
+            renderSolution(solution, domain, graph_good)
+            document.getElementById('cost_good').innerHTML = `Cost: ${solution.cost} <br/>`
+            for(let k in solution.cost_parts){
+                document.getElementById('cost_good').innerHTML += `-> ${k}: ${solution.cost_parts[k]} <br/>`
+            }
+        }
+        if (domain.bad_solutions.length > 0) {
+            let solution = domain.bad_solutions[domain.bad_solutions.length - 1]
+            renderSolution(solution, domain, graph_bad)
+            document.getElementById('cost_bad').innerHTML = `Cost: ${solution.cost} <br/>`
+            for(let k in solution.cost_parts){
+                document.getElementById('cost_bad').innerHTML += `-> ${k}: ${solution.cost_parts[k]} <br/>`
+            }
+        }
+        renderDomain(domain, graph_good)
+        renderDomain(domain, graph_bad)
+    }
+    updateData()
+
+    function renderDomain(domain, graph) {
         let xMin = Math.min(...domain.points.map(p => p.x))
         let xMax = Math.max(...domain.points.map(p => p.x))
         let yMin = Math.min(...domain.points.map(p => p.y))
@@ -79,12 +147,11 @@
         graph.innerHTML += ""
     }
 
-    function renderSolution(solution, domain){
-        document.getElementById('cost').innerText = `Cost: ${solution.cost}`
-
+    function renderSolution(solution, domain, graph){
         let links = solution.links
         let points = domain.points
 
+        let rotateDegrees = 15 * (Math.PI / 180)
         for(let idx in links){
             let startPoint = points[idx];
             for(let trgIdx in links[idx]){
@@ -94,7 +161,11 @@
                     let path = document.createElement('path')
                     let dirX = endPoint.x - startPoint.x
                     let dirY = endPoint.y - startPoint.y
-                    path.setAttribute("d", `M ${ startPoint.x*SCALE} ${startPoint.y*SCALE} C ${ startPoint.x*SCALE - dirX * SCALE * 0.15} ${startPoint.y*SCALE + dirY * SCALE * 0.15}  ${ endPoint.x*SCALE} ${endPoint.y*SCALE} ${ endPoint.x*SCALE} ${endPoint.y*SCALE}`)
+
+                    let dirXRotated = Math.cos(rotateDegrees) * dirX - Math.sin(rotateDegrees) * dirY
+                    let dirYRotated = Math.sin(rotateDegrees) * dirX + Math.cos(rotateDegrees) * dirY
+                    {#path.setAttribute("d", `M ${ startPoint.x*SCALE} ${startPoint.y*SCALE} C ${ startPoint.x*SCALE + dirXRotated * SCALE} ${startPoint.y*SCALE + dirYRotated*SCALE}  ${ endPoint.x*SCALE} ${endPoint.y*SCALE} ${ endPoint.x*SCALE} ${endPoint.y*SCALE}`)#}
+                    path.setAttribute("d", `M ${ startPoint.x*SCALE} ${startPoint.y*SCALE} Q ${ (startPoint.x + dirXRotated/2)*SCALE} ${(startPoint.y + dirYRotated/2)*SCALE} ${ endPoint.x*SCALE} ${endPoint.y*SCALE}`)
                     path.setAttribute('marker-end', "url(#triangle)")
                     path.setAttribute('stroke-width', 1)
                     path.setAttribute('stroke', links[idx][trgIdx] === 1? "red" : "green")

@@ -1,56 +1,68 @@
+import random
 from copy import deepcopy
+from datetime import datetime
+from threading import Thread
+from time import sleep
+
 import numpy as np
+
 from my_types import Point, Domain, Solution, GraphNode
 
-domain = Domain()
-domain.points.append(
-    Point(
-        x=0,
-        y=0,
+
+def create_test_domain():
+    domain = Domain()
+    domain.points.append(
+        Point(
+            x=0,
+            y=0,
+        )
     )
-)
-domain.points.append(
-    Point(
-        x=3,
-        y=1,
+    domain.points.append(
+        Point(
+            x=3,
+            y=1,
+        )
     )
-)
-domain.points.append(
-    Point(
-        x=4,
-        y=-3,
+    domain.points.append(
+        Point(
+            x=7,
+            y=-4,
+        )
     )
-)
-domain.points.append(
-    Point(
-        x=2,
-        y=5,
+    domain.points.append(
+        Point(
+            x=2,
+            y=5,
+        )
     )
-)
-domain.points.append(
-    Point(
-        x=1,
-        y=5,
+    domain.points.append(
+        Point(
+            x=1,
+            y=5,
+        )
     )
-)
-domain.points.append(
-    Point(
-        x=8,
-        y=3,
+    domain.points.append(
+        Point(
+            x=8,
+            y=3,
+        )
     )
-)
-domain.points.append(
-    Point(
-        x=5,
-        y=1,
+    domain.points.append(
+        Point(
+            x=5,
+            y=1,
+        )
     )
-)
+    domain.time_limit = 30
+    return domain
 
 
-class Optimizer:
+class Optimizer(Thread):
     def __init__(self, domain):
+        super().__init__()
         self.domain: Domain = domain
         self.fill_distances()
+        self.is_running = False
 
     def fill_distances(self):
         points = self.domain.points
@@ -64,6 +76,7 @@ class Optimizer:
     def get_starting_solution(self) -> Solution:
         solution = Solution()
         solution.links = [[0] * len(self.domain.points) for i in range(len(self.domain.points))]
+        # return solution
         cur_point = self.domain.start_point_idx
         seen_points = [cur_point]
         while True:
@@ -88,15 +101,33 @@ class Optimizer:
             # Ja esam nonākuši finišā, un viss ir apmeklēts, tad beidzam
             if cur_point == self.domain.finish_point_idx:
                 break
-        # solution.links[2][3] = 1
-        # solution.links[3][2] = 1
-        # solution.links[5][1] = 1
         return solution
 
-    def get_next_solutions(self, n: int) -> list[Solution]:
+    def get_next_solutions(self, solution: Solution, n: int) -> list[Solution]:
         i = 0
+        solutions = []
+        solutions_used = set()
         while i < n:
-            pass
+            sol = Solution()
+            sol.links = deepcopy(solution.links)
+            for y in sol.links:
+                for x, v in enumerate(y):
+                    if v > 0:  # Notīram, lai nepaliek atmiņa par iepriekšējo īsāko ceļu
+                        y[x] = 1
+                    else:
+                        y[x] = 0
+
+            rand_x = random.randint(0, len(sol.links)-1)
+            rand_y = random.randint(0, len(sol.links)-1)
+            if rand_x == rand_y:
+                continue
+            value = sol.links[rand_y][rand_x]
+            sol.links[rand_y][rand_x] = 0 if value else 1
+            if f"{sol}" not in solutions_used:
+                solutions.append(sol)
+                solutions_used.add(f"{sol}")
+                i += 1
+        return solutions
 
     def build_graph(self, solution: Solution):
         nodes = []
@@ -106,7 +137,6 @@ class Optimizer:
                     point=p
                 )
             )
-
 
         def process_node(node: GraphNode):
             idx = self.domain.points.index(node.point)
@@ -132,7 +162,7 @@ class Optimizer:
                     path, dst = find_path(
                         n,
                         cur_path[:],
-                        cur_dist + domain.distances[self.domain.points.index(node.point)][self.domain.points.index(n.point)]
+                        cur_dist + self.domain.distances[self.domain.points.index(node.point)][self.domain.points.index(n.point)]
                     )
                     if dst >= 0:
                         if len(best_path) < len(path) or (len(best_path) == len(path) and best_dst > dst):
@@ -147,6 +177,7 @@ class Optimizer:
 
         solution.best_path_steps = len(best_path)
         solution.best_path_len = best_dst
+        solution.best_path_value = sum([n.point.value for n in best_path])
 
         for i, node in enumerate(best_path):
             point_idx = self.domain.points.index(node.point)
@@ -154,7 +185,7 @@ class Optimizer:
             next = node.links[0]
             if len(node.links) > 1:
                 for nnode in node.links:
-                    if self.domain.points.index(nnode.point) == domain.finish_point_idx or (len(best_path) > i+1 and nnode.point == best_path[i+1].point):
+                    if self.domain.points.index(nnode.point) == self.domain.finish_point_idx or (len(best_path) > i+1 and nnode.point == best_path[i+1].point):
                         next=nnode
             next_idx = self.domain.points.index(next.point)
             solution.links[point_idx][next_idx] = 2
@@ -163,48 +194,90 @@ class Optimizer:
         # Aprēķinam ceļa garumu un izmaksas
         self.build_graph(solution)
 
+        links = np.array(solution.links)
         distances = np.array(self.domain.distances)
-        route = np.array(solution.links)
-
-        distance = np.sum(distances * route)
-        overtime = min(0, self.domain.time_limit - distance) * -1
-        wasted_distance = distance - solution.best_path_len
-
-        path_steps_score = 1 - (solution.best_path_steps / len(self.domain.points))
-
         # Mērķi:
-        #   overtime = 0
-        #   distance = best_path_len (risinājumā nav ceļi kas nekur nenoved)
-        #   wasted_distance = 0   (risinājumā nav ceļi kas nekur nenoved)
-        #   best_path_len --> 0 (Risinājums atrod īsāko ceļu)
-        #   path_steps_score --> 0 (Risinājums iekļauj visus punktus)
+        #   maksimāli daudz apmeklēti punkti
+        node_goal = 1 - (solution.best_path_steps / len(self.domain.points))
+        #   minimāla distance
+        dist_goal = solution.best_path_len / np.sum(distances) if solution.best_path_len else np.sum(self.domain.distances)
+        #   minimāls neizmantoto ceļu skaits
+        spare_links = np.count_nonzero(links == 1) / len(self.domain.points) ** 2
+        #   minimāla neizmantotā distance
+        links[links == 2] = 1
+        spare_dist_goal = (1 - solution.best_path_len / np.sum(distances * links)) if solution.best_path_len else np.sum(self.domain.distances)
+        #   maksimāla savākto punktu vērtība
+        point_goal = 1 - solution.best_path_value / sum([i.value for i in self.domain.points])
+        #   pieņemsim ka solution.time_limit ir distance limit, sodam par parsniegto distanci
+        overtime_penalty = max(0, solution.best_path_len - self.domain.time_limit) / self.domain.time_limit
+        #   sodam arī par neizmantotu laiku
+        undertime_penalty = max(0, self.domain.time_limit - solution.best_path_len) / self.domain.time_limit
 
-        # Reizinam best_path_len un path_steps_score lai nesodītu modeli par papildus punktu pielikšanu
+        # Pielietojam koeficientus lai mainītu fokusu
+        #   izvelkam sakni, lai ievērojami sodītu par pārtērēto
+        overtime_penalty = overtime_penalty ** 0.5
+        #   kāpinam, lai ļautu būt nedaudz zem atvēlētā laika un par to sodītu mazāk
+        undertime_penalty = undertime_penalty ** 2
 
-        solution.cost = overtime + wasted_distance + solution.best_path_len * (0.25 + path_steps_score * 0.75)
+        solution.cost = node_goal + dist_goal + point_goal + spare_links + overtime_penalty + undertime_penalty
 
         solution.cost_parts = {
-            "distance": distance,
-            "wasted_distance": wasted_distance,
-            "overtime": overtime,
-            "path_len": solution.best_path_len,
-            "path_steps": solution.best_path_steps,
-            "path_steps_score": path_steps_score,
-            "formula": f"{overtime} + {wasted_distance} + {solution.best_path_len} * (0.25 + {path_steps_score} * 0.75)"
+            "node_goal": round(node_goal, 4),
+            "dist_goal": round(dist_goal, 4),
+            "point_goal": round(point_goal, 4),
+            "spare_dist_goal": round(spare_dist_goal, 4),
+            "overtime_penalty": round(overtime_penalty, 4),
+            "undertime_penalty": round(undertime_penalty, 4),
+            "spare_links": round(spare_links, 4),
         }
 
     def solve(self):
-        solution = self.get_starting_solution()
-        self.build_graph(solution)
-        self.evaluate_solution(solution)
-        self.domain.solutions.append(solution)
+        start = datetime.now()
+        if len(self.domain.solutions) == 0:
+            solution = self.get_starting_solution()
+            self.build_graph(solution)
+            self.evaluate_solution(solution)
+            self.domain.solutions.append(solution)
+        else:
+            if len(self.domain.bad_solutions) > 10 and random.random() > 0.005:
+                prev_solution = self.domain.bad_solutions[-10]
+            else:
+                prev_solution = self.domain.solutions[-1]
+                if len(self.domain.bad_solutions) > 10:
+                    print("Reset thought")
+            solutions = self.get_next_solutions(prev_solution, 25)
+            best_solution = None
+            for solution in solutions:
+                self.build_graph(solution)
+                self.evaluate_solution(solution)
+                if not best_solution or solution.cost < best_solution.cost:
+                    best_solution = solution
 
+            if best_solution.cost < self.domain.solutions[-1].cost:
+                self.domain.solutions.append(best_solution)
+                self.domain.bad_solutions = []
+                print("Found:", best_solution.cost, prev_solution.cost)
+            else:
+                self.domain.bad_solutions.append(best_solution)
+                self.domain.bad_solutions = self.domain.bad_solutions[-11:]
+        print("Time taken: ", datetime.now() - start)
 
-optimizer = Optimizer(domain)
-optimizer.solve()
-solution = optimizer.domain.solutions[-1]
+    def run(self) -> None:
+        self.is_running = True
+        while self.is_running:
+            self.solve()
+            sleep(1)  # Iepauzējam uz brīdi lai citi pavedieni var darboties
+
+    def stop(self):
+        self.is_running = False
+
 
 if __name__ == '__main__':
+    domain = create_test_domain()
+    optimizer = Optimizer(domain)
+    optimizer.solve()
+    solution = optimizer.domain.solutions[-1]
+
     print(domain.to_json(indent=4))
 
     for i, a in enumerate(solution.links):

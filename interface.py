@@ -18,14 +18,35 @@ def ui():
     return flask.render_template('show.html')
 
 
+@app.route('/iterate')
+def iterate():
+    optimizer.solve()
+    return domain.to_json()
+
+
 @app.route('/data')
 def data():
-    optimizer.solve()
+    return domain.to_json()
+
+
+@app.route('/decrease/<int:idx>')
+def decrease(idx):
+    point = domain.points[idx]
+    if point.value == 1:
+        domain.points.pop(idx)
+    else:
+        point.value -= 1
+    optimizer.fill_distances()
+    domain.solutions = []
+    domain.bad_solutions = []
     return domain.to_json()
 
 
 @app.route('/reset')
 def reset():
+    domain = create_test_domain()
+    optimizer.domain = domain
+    optimizer.fill_distances()
     domain.solutions = []
     domain.bad_solutions = []
     return {}

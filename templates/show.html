@@ -44,8 +44,8 @@
     </div>
 </div>
 <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-    <button onclick="playing=!playing; updateData(); this.innerText = playing? 'Pause' : 'Play'">Play</button>
-    <button onclick="!playing && updateData()" style="margin-left: 10px;">Step</button>
+    <button onclick="playing=!playing; iterateData(); this.innerText = playing? 'Pause' : 'Play'">Play</button>
+    <button onclick="!playing && iterateData()" style="margin-left: 10px;">Step</button>
     <button onclick="fetch('/reset')" style="margin-left: 10px;">Reset</button>
 </div>
 <script>
@@ -76,24 +76,34 @@
 
     window.oncontextmenu = function (e)
     {
-        let target = e.target
-        if(target.nodeName === "circle"){
-            if(target.parentNode.id === 'graph_good') {
-                console.log('circle')
+        (async () => {
+            let target = e.target
+            if (target.nodeName === "circle") {
+                if (target.parentNode.id === 'graph_good') {
+                    const response = await fetch(`/decrease/${target.id}`)
+                    domain = await response.json()
+                    render()
+                }
             }
-        }
+        })()
         return false;     // cancel default menu
     }
 
     let domain = null;
+    async function iterateData() {
+        const response = await fetch('/iterate')
+        domain = await response.json()
+        await render()
+        if(playing)
+            setTimeout(iterateData, 100)
+    }
     async function updateData() {
         const response = await fetch('/data')
         domain = await response.json()
         await render()
-        if(playing)
-            setTimeout(updateData, 100)
     }
     async function render() {
+        if(domain === null) return;
         graph_bad.innerHTML = graph_good.innerHTML =`
             <defs>
                 <marker
@@ -135,7 +145,7 @@
         renderDomain(domain, graph_good)
         renderDomain(domain, graph_bad)
     }
-    updateData()
+    iterateData()
 
     function renderDomain(domain, graph) {
         let xMin = Math.min(...domain.points.map(p => p.x))
@@ -153,6 +163,8 @@
             circle.setAttribute("cx", p.x * SCALE);
             circle.setAttribute("cy", p.y * SCALE);
             circle.setAttribute("stroke", "black");
+            circle.setAttribute("id", idx)
+            circle.setAttribute("aria-value", p.value)
             graph.appendChild(circle)
 
 

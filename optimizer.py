@@ -124,8 +124,13 @@ class Optimizer(Thread):
             if rand_x == rand_y:  # Neļaujam veidot saiti ar sevi
                 continue
             value = sol.links[rand_y][rand_x]
-            sol.links[rand_y][rand_x] = 0 if value else 1
-            if f"{sol}" not in solutions_used: # Ja šāds piedāvātais risinājums vel nav ietverts šajā apkaimē
+            if value == 1 and random.random() > 0.75:
+                # Ar 25% iespēju apmainam ceļa virzienu
+                sol.links[rand_y][rand_x] = 0
+                sol.links[rand_x][rand_y] = 1
+            else:
+                sol.links[rand_y][rand_x] = 0 if value else 1
+            if f"{sol}" not in solutions_used:  # Ja šāds piedāvātais risinājums vel nav ietverts šajā apkaimē
                 solutions.append(sol)
                 solutions_used.add(f"{sol}")
                 i += 1

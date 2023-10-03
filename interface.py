@@ -24,5 +24,12 @@ def data():
     return domain.to_json()
 
 
+@app.route('/reset')
+def reset():
+    domain.solutions = []
+    domain.bad_solutions = []
+    return {}
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0')

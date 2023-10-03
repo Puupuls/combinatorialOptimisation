@@ -53,7 +53,7 @@ def create_test_domain():
             y=1,
         )
     )
-    domain.time_limit = 30
+    domain.time_limit = 31
     return domain
 
 
@@ -74,6 +74,7 @@ class Optimizer(Thread):
         self.domain.distances = distances
 
     def get_starting_solution(self) -> Solution:
+        # Iegūstam alkatīgo risinājumu izvēloties tuvāko neapmeklēto punktu līdz izveidots aplis
         solution = Solution()
         solution.links = [[0] * len(self.domain.points) for i in range(len(self.domain.points))]
         # return solution
@@ -117,13 +118,14 @@ class Optimizer(Thread):
                     else:
                         y[x] = 0
 
+            # Izvēlamies nejaušu saiti un apmainam tās tipu (ja bija saite - izdzēšam, ja nebija - pieliekam)
             rand_x = random.randint(0, len(sol.links)-1)
             rand_y = random.randint(0, len(sol.links)-1)
-            if rand_x == rand_y:
+            if rand_x == rand_y:  # Neļaujam veidot saiti ar sevi
                 continue
             value = sol.links[rand_y][rand_x]
             sol.links[rand_y][rand_x] = 0 if value else 1
-            if f"{sol}" not in solutions_used:
+            if f"{sol}" not in solutions_used: # Ja šāds piedāvātais risinājums vel nav ietverts šajā apkaimē
                 solutions.append(sol)
                 solutions_used.add(f"{sol}")
                 i += 1
@@ -201,13 +203,13 @@ class Optimizer(Thread):
         node_goal = 1 - (solution.best_path_steps / len(self.domain.points))
         #   minimāla distance
         dist_goal = solution.best_path_len / np.sum(distances) if solution.best_path_len else np.sum(self.domain.distances)
+        #   maksimāla savākto punktu vērtība
+        point_goal = 1 - solution.best_path_value / sum([i.value for i in self.domain.points])
         #   minimāls neizmantoto ceļu skaits
         spare_links = np.count_nonzero(links == 1) / len(self.domain.points) ** 2
         #   minimāla neizmantotā distance
         links[links == 2] = 1
         spare_dist_goal = (1 - solution.best_path_len / np.sum(distances * links)) if solution.best_path_len else np.sum(self.domain.distances)
-        #   maksimāla savākto punktu vērtība
-        point_goal = 1 - solution.best_path_value / sum([i.value for i in self.domain.points])
         #   pieņemsim ka solution.time_limit ir distance limit, sodam par parsniegto distanci
         overtime_penalty = max(0, solution.best_path_len - self.domain.time_limit) / self.domain.time_limit
         #   sodam arī par neizmantotu laiku
@@ -215,9 +217,11 @@ class Optimizer(Thread):
 
         # Pielietojam koeficientus lai mainītu fokusu
         #   izvelkam sakni, lai ievērojami sodītu par pārtērēto
-        overtime_penalty = overtime_penalty ** 0.5
+        overtime_penalty = overtime_penalty ** 0.25
         #   kāpinam, lai ļautu būt nedaudz zem atvēlētā laika un par to sodītu mazāk
-        undertime_penalty = undertime_penalty ** 2
+        undertime_penalty = undertime_penalty ** 3
+        #   kāpinam lai samazinātu ietekmi, jo vērtība vairāk vai mazāk dublē point_goal
+        node_goal = node_goal ** 2
 
         solution.cost = node_goal + dist_goal + point_goal + spare_links + overtime_penalty + undertime_penalty
 
@@ -234,33 +238,39 @@ class Optimizer(Thread):
     def solve(self):
         start = datetime.now()
         if len(self.domain.solutions) == 0:
+            # Ja vel nav risinājumu, iegūstam sākotnējo risinājumu
             solution = self.get_starting_solution()
             self.build_graph(solution)
             self.evaluate_solution(solution)
             self.domain.solutions.append(solution)
         else:
             if len(self.domain.bad_solutions) > 10 and random.random() > 0.005:
+                # Ja vēsturē ir vairāk kā 10 mēginājumi, kas nekļuva par labākajiem risinājumiem
+                # Izvēlamies risinājumu kas bija pirms desmit iterācijām kā sākuma risinājumu jaunu ģenerēšanai
+                # 0.5% iespēja ka tā nedaram lai ļautu apskatīt "jaunus ceļus"
                 prev_solution = self.domain.bad_solutions[-10]
             else:
                 prev_solution = self.domain.solutions[-1]
-                if len(self.domain.bad_solutions) > 10:
-                    print("Reset thought")
+
             solutions = self.get_next_solutions(prev_solution, 25)
             best_solution = None
+            # Atrodam labāko grupā
             for solution in solutions:
                 self.build_graph(solution)
                 self.evaluate_solution(solution)
                 if not best_solution or solution.cost < best_solution.cost:
                     best_solution = solution
 
+            # Ja labākais grupā nedod pienesumu, pievienojam neveiksmīgajiem
+            # Citādi pievienojam kā jaunu labāko risinājumu
             if best_solution.cost < self.domain.solutions[-1].cost:
                 self.domain.solutions.append(best_solution)
                 self.domain.bad_solutions = []
-                print("Found:", best_solution.cost, prev_solution.cost)
+                # print("Found:", best_solution.cost, prev_solution.cost)
             else:
                 self.domain.bad_solutions.append(best_solution)
                 self.domain.bad_solutions = self.domain.bad_solutions[-11:]
-        print("Time taken: ", datetime.now() - start)
+        # print("Time taken: ", datetime.now() - start)
 
     def run(self) -> None:
         self.is_running = True

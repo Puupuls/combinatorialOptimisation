@@ -18,7 +18,7 @@ class Point:
 class Domain:
     points: list[Point] = field(default_factory=list)
     distances: list[list[int]] = field(default_factory=list)
-    time_limit = 1
+    time_limit: float = 1
     start_point_idx: int = 0
     finish_point_idx: int = 0
     solutions: list[Solution] = field(default_factory=list)

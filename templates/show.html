@@ -31,6 +31,7 @@
         <svg
                 id="graph_good"
                 xmlns="http://www.w3.org/2000/svg"
+                style="display: flex; flex: 1;"
         >
         </svg>
         <div style="width:100%; display: flex;"><input style="flex:1" type="range" min="0" max="0" value="0" step="1" oninput="onSolutionChange(this)" id="solutionSelectInput"/><span id="solutionSelectSpan">0</span></div>
@@ -44,49 +45,106 @@
     </div>
 </div>
 <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-    <button onclick="playing=!playing; iterateData(); this.innerText = playing? 'Pause' : 'Play'">Play</button>
+    <button onclick="onPlay()" id="play">Play</button>
     <button onclick="!playing && iterateData()" style="margin-left: 10px;">Step</button>
-    <button onclick="fetch('/reset')" style="margin-left: 10px;">Reset</button>
+    <button onclick="onReset()" style="margin: 0 10px;">Reset</button>
+    Max distance: <input name="maxDist" id="maxDist" onchange="onDistChange(this)" />
 </div>
 <script>
-    const SCALE = 50
     const graph_good = document.getElementById('graph_good')
     const graph_bad = document.getElementById('graph_bad')
 
     let playing = false
 
     let solutionIndex = 0
+    let maxDistInput = document.getElementById('maxDist')
     let solutionSelectInput = document.getElementById('solutionSelectInput')
     let solutionSelectSpan = document.getElementById('solutionSelectSpan')
+
+    async function sleep(sec){
+        return new Promise(resolve => setTimeout(resolve, sec * 1000))
+    }
+
+    async function onReset(){
+        const response = await fetch('/reset');
+        domain = await response.json();
+        render()
+    }
+
+    async function onDistChange(input){
+        const response = await fetch(`/setDist?dst=${input.value}`);
+        domain = await response.json();
+        render()
+    }
+
     async function onSolutionChange(input){
         solutionIndex = input.value
         solutionSelectSpan.innerText = solutionIndex;
         await render()
     }
 
-    graph_good.addEventListener('click', (evt) =>{
+    async function onPlay(){
+        playing=!playing;
+        iterateData();
+        document.getElementById('play').innerText = playing? 'Pause' : 'Play'
+    }
+
+    let pt = graph_good.createSVGPoint();  // Created once for document
+    graph_good.addEventListener('click', async (evt) =>{
         let target = evt.target;
 
         if(target.nodeName === "circle"){
-            console.log('circle')
+            let wasPlaying = false
+            if(playing) {
+                onPlay()
+                wasPlaying = true;
+                await sleep(0.1)
+            }
+            const response = await fetch(`/increase/${target.id}`)
+            domain = await response.json()
+            render()
+            if(wasPlaying) onPlay()
         } else if(target.nodeName === "svg"){
-            console.log('svg')
+            let wasPlaying = false
+            if(playing) {
+                onPlay()
+                wasPlaying = true;
+                await sleep(0.1)
+            }
+
+            pt.x = evt.clientX;
+            pt.y = evt.clientY;
+            let cursorpt =  pt.matrixTransform(graph_good.getScreenCTM().inverse());
+            const response = await fetch(`/create?x=${cursorpt.x}&y=${cursorpt.y}`)
+            domain = await response.json()
+            render()
+            if(wasPlaying) onPlay()
         }
     })
 
     window.oncontextmenu = function (e)
     {
-        (async () => {
-            let target = e.target
-            if (target.nodeName === "circle") {
-                if (target.parentNode.id === 'graph_good') {
+        let shouldPrevent = false
+        let target = e.target
+        if (target.nodeName === "circle") {
+            if (target.parentNode.id === 'graph_good') {
+                shouldPrevent = true;
+                (async () => {
+                    let wasPlaying = false
+                    if(playing) {
+                        onPlay()
+                        wasPlaying = true;
+                        await sleep(0.1)
+                    }
                     const response = await fetch(`/decrease/${target.id}`)
                     domain = await response.json()
                     render()
-                }
+
+                    if(wasPlaying) onPlay()
+                })()
             }
-        })()
-        return false;     // cancel default menu
+        }
+        return !shouldPrevent;     // cancel default menu
     }
 
     let domain = null;
@@ -104,12 +162,13 @@
     }
     async function render() {
         if(domain === null) return;
+        graph_bad.style.border = graph_good.style.border = '1px solid black'
         graph_bad.innerHTML = graph_good.innerHTML =`
             <defs>
                 <marker
                         id="triangle"
                         viewBox="0 0 10 10"
-                        refX="${SCALE * 0.4}"
+                        refX="20"
                         refY="5"
                         markerUnits="strokeWidth"
                         markerWidth="10"
@@ -129,7 +188,7 @@
             }
             let solution = domain.solutions[solutionIndex]
             renderSolution(solution, domain, graph_good)
-            document.getElementById('cost_good').innerHTML = `Cost: ${solution.cost} <br/>`
+            document.getElementById('cost_good').innerHTML = `Izmaksas: ${solution.cost} <br/>`
             for(let k in solution.cost_parts){
                 document.getElementById('cost_good').innerHTML += `-> ${k}: ${solution.cost_parts[k]} <br/>`
             }
@@ -137,31 +196,40 @@
         if (domain.bad_solutions.length > 0) {
             let solution = domain.bad_solutions[domain.bad_solutions.length - 1]
             renderSolution(solution, domain, graph_bad)
-            document.getElementById('cost_bad').innerHTML = `Cost: ${solution.cost} <br/>`
+            document.getElementById('cost_bad').innerHTML = `Izmaksas: ${solution.cost} <br/>`
             for(let k in solution.cost_parts){
                 document.getElementById('cost_bad').innerHTML += `-> ${k}: ${solution.cost_parts[k]} <br/>`
             }
+        }
+        if(!maxDistInput.value) {
+            maxDistInput.value = domain.time_limit
         }
         renderDomain(domain, graph_good)
         renderDomain(domain, graph_bad)
     }
     iterateData()
 
+    let xMin = 0
+    let xMax = 0
+    let yMin = 0
+    let yMax = 0
+    let width = 0
+    let height = 0
     function renderDomain(domain, graph) {
-        let xMin = Math.min(...domain.points.map(p => p.x))
-        let xMax = Math.max(...domain.points.map(p => p.x))
-        let yMin = Math.min(...domain.points.map(p => p.y))
-        let yMax = Math.max(...domain.points.map(p => p.y))
-        let width = Math.max(15, xMax - xMin);
-        let height = Math.max(15, yMax - yMin);
-        graph.setAttribute("viewBox", `${(xMin - width * 0.1) * SCALE} ${(yMin - height * 0.1) * SCALE} ${(width * 1.3) * SCALE} ${(height * 1.3) * SCALE}`)
+        xMin = Math.min(...domain.points.map(p => p.x), 0)
+        xMax = Math.max(...domain.points.map(p => p.x), 0)
+        yMin = Math.min(...domain.points.map(p => p.y), 0)
+        yMax = Math.max(...domain.points.map(p => p.y), 0)
+        width = Math.max(600, xMax - xMin);
+        height = Math.max(600, yMax - yMin);
+        graph.setAttribute("viewBox", `${xMin - width * 0.1} ${yMin - height * 0.1} ${width * 1.3} ${height * 1.3}`)
 
         for (let idx in domain.points) {
             let p = domain.points[idx]
             let circle = document.createElement("circle");
-            circle.setAttribute("r", 0.2 * SCALE);
-            circle.setAttribute("cx", p.x * SCALE);
-            circle.setAttribute("cy", p.y * SCALE);
+            circle.setAttribute("r", 10);
+            circle.setAttribute("cx", p.x);
+            circle.setAttribute("cy", p.y);
             circle.setAttribute("stroke", "black");
             circle.setAttribute("id", idx)
             circle.setAttribute("aria-value", p.value)
@@ -171,18 +239,23 @@
             let idxText = document.createElement("text")
             idxText.setAttribute("fill", "white")
             idxText.innerText = idx
-            idxText.setAttribute("font-size", 0.35 * SCALE)
+            idxText.setAttribute("font-size", 17)
             graph.appendChild(idxText)
-            idxText.setAttribute("x", p.x * SCALE - 0.35 * SCALE / 4)
-            idxText.setAttribute("y", p.y * SCALE + 0.35 * SCALE / 4)
+            idxText.setAttribute("x", p.x - 6)
+            idxText.setAttribute("y", p.y + 4)
 
             let coordText = document.createElement("text")
             coordText.innerText = `${p.x}, ${p.y} (${p.value})`
             coordText.setAttribute("fill", "gray")
-            coordText.setAttribute("font-size", 0.2 * SCALE)
+            coordText.setAttribute("font-size", 8)
             graph.appendChild(coordText)
-            coordText.setAttribute("x", p.x * SCALE - SCALE / 4)
-            coordText.setAttribute("y", p.y * SCALE + 0.35 * SCALE)
+            coordText.setAttribute("x", p.x - 15)
+            coordText.setAttribute("y", p.y + 18)
+
+            let clickableCircle = circle.cloneNode()
+            clickableCircle.setAttribute("stroke", "transparent")
+            clickableCircle.setAttribute("fill", "transparent")
+            graph.appendChild(clickableCircle)
         }
         graph.innerHTML += ""
     }
@@ -204,8 +277,7 @@
 
                     let dirXRotated = Math.cos(rotateDegrees) * dirX - Math.sin(rotateDegrees) * dirY
                     let dirYRotated = Math.sin(rotateDegrees) * dirX + Math.cos(rotateDegrees) * dirY
-                    {#path.setAttribute("d", `M ${ startPoint.x*SCALE} ${startPoint.y*SCALE} C ${ startPoint.x*SCALE + dirXRotated * SCALE} ${startPoint.y*SCALE + dirYRotated*SCALE}  ${ endPoint.x*SCALE} ${endPoint.y*SCALE} ${ endPoint.x*SCALE} ${endPoint.y*SCALE}`)#}
-                    path.setAttribute("d", `M ${ startPoint.x*SCALE} ${startPoint.y*SCALE} Q ${ (startPoint.x + dirXRotated/2)*SCALE} ${(startPoint.y + dirYRotated/2)*SCALE} ${ endPoint.x*SCALE} ${endPoint.y*SCALE}`)
+                    path.setAttribute("d", `M ${ startPoint.x} ${startPoint.y} Q ${ (startPoint.x + dirXRotated/2)} ${(startPoint.y + dirYRotated/2)} ${ endPoint.x} ${endPoint.y}`)
                     path.setAttribute('marker-end', "url(#triangle)")
                     path.setAttribute('stroke-width', 1)
                     path.setAttribute('stroke', links[idx][trgIdx] === 1? "red" : "green")

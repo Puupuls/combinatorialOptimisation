@@ -19,41 +19,41 @@ def create_test_domain():
     )
     domain.points.append(
         Point(
-            x=3,
-            y=1,
+            x=150,
+            y=50,
         )
     )
     domain.points.append(
         Point(
-            x=7,
-            y=-4,
+            x=350,
+            y=-200,
         )
     )
     domain.points.append(
         Point(
-            x=2,
-            y=5,
+            x=100,
+            y=250,
         )
     )
     domain.points.append(
         Point(
-            x=1,
-            y=5,
+            x=50,
+            y=250,
         )
     )
     domain.points.append(
         Point(
-            x=8,
-            y=3,
+            x=400,
+            y=150,
         )
     )
     domain.points.append(
         Point(
-            x=5,
-            y=1,
+            x=250,
+            y=50,
         )
     )
-    domain.time_limit = 31
+    domain.time_limit = 1700
     return domain
 
 
@@ -227,21 +227,24 @@ class Optimizer(Thread):
         undertime_penalty = undertime_penalty ** 3
         #   kāpinam lai samazinātu ietekmi, jo vērtība vairāk vai mazāk dublē point_goal
         node_goal = node_goal ** 2
+        #   kāpinam lai samazinātu ietekmi, jo neļauj modelim izvēlēties labus ceļus ja ir lieki posmi
+        spare_links = spare_links ** 2
 
         solution.cost = node_goal + dist_goal + point_goal + spare_links + overtime_penalty + undertime_penalty
-
         solution.cost_parts = {
-            "node_goal": round(node_goal, 4),
-            "dist_goal": round(dist_goal, 4),
-            "point_goal": round(point_goal, 4),
-            "spare_dist_goal": round(spare_dist_goal, 4),
-            "overtime_penalty": round(overtime_penalty, 4),
-            "undertime_penalty": round(undertime_penalty, 4),
-            "spare_links": round(spare_links, 4),
+            "Apmeklētās virsotnes": round(node_goal, 4),
+            "Īsākais ceļš": round(dist_goal, 4),
+            "Savāktie punkti": round(point_goal, 4),
+            # "Liekā distance": round(spare_dist_goal, 4),
+            "Liekie savienojumi": round(spare_links, 4),
+            "Pārtērētais laiks": round(overtime_penalty, 4),
+            "Neizmantotais laiks": round(undertime_penalty, 4),
+            "Ceļa garums": round(solution.best_path_len, 4)
         }
 
     def solve(self):
-        start = datetime.now()
+        if len(self.domain.points) < 2:
+            return
         if len(self.domain.solutions) == 0:
             # Ja vel nav risinājumu, iegūstam sākotnējo risinājumu
             solution = self.get_starting_solution()
@@ -257,7 +260,7 @@ class Optimizer(Thread):
             else:
                 prev_solution = self.domain.solutions[-1]
 
-            solutions = self.get_next_solutions(prev_solution, 25)
+            solutions = self.get_next_solutions(prev_solution, min((len(self.domain.points)-1)*2, 60))
             best_solution = None
             # Atrodam labāko grupā
             for solution in solutions:

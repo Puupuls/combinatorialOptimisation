@@ -1,8 +1,9 @@
 import json
 
 import flask
-from flask import Flask
+from flask import Flask, request
 
+from my_types import Point
 from optimizer import create_test_domain, Optimizer
 
 app = Flask(__name__)
@@ -36,6 +37,42 @@ def decrease(idx):
         domain.points.pop(idx)
     else:
         point.value -= 1
+    optimizer.domain = domain
+    optimizer.fill_distances()
+    domain.solutions = []
+    domain.bad_solutions = []
+    return domain.to_json()
+
+
+@app.route('/increase/<int:idx>')
+def increase(idx):
+    point = domain.points[idx]
+    point.value += 1
+    optimizer.domain = domain
+    optimizer.fill_distances()
+    domain.solutions = []
+    domain.bad_solutions = []
+    return domain.to_json()
+
+
+@app.route('/create')
+def create():
+    x = request.args.get("x")
+    y = request.args.get('y')
+    point = Point(
+        x=round(float(x), 2),
+        y=round(float(y), 2)
+    )
+    optimizer.domain.points.append(point)
+    optimizer.fill_distances()
+    domain.solutions = []
+    domain.bad_solutions = []
+    return domain.to_json()
+
+
+@app.route('/setDist')
+def setDist():
+    optimizer.domain.time_limit = float(request.args.get('dst'))
     optimizer.fill_distances()
     domain.solutions = []
     domain.bad_solutions = []
@@ -44,12 +81,11 @@ def decrease(idx):
 
 @app.route('/reset')
 def reset():
+    global optimizer, domain
     domain = create_test_domain()
-    optimizer.domain = domain
-    optimizer.fill_distances()
-    domain.solutions = []
-    domain.bad_solutions = []
-    return {}
+    optimizer = Optimizer(domain)
+    optimizer.solve()
+    return optimizer.domain.to_json()
 
 
 if __name__ == '__main__':

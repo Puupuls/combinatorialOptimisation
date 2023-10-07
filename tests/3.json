@@ -1,0 +1,1346 @@
+{
+    "points": [
+        {
+            "x": 0,
+            "y": 0,
+            "value": 1
+        },
+        {
+            "x": -52.82,
+            "y": 378.49,
+            "value": 1
+        },
+        {
+            "x": 409.6,
+            "y": 112.51,
+            "value": 1
+        },
+        {
+            "x": 1064.2,
+            "y": 454.27,
+            "value": 1
+        },
+        {
+            "x": -56.81,
+            "y": 1052.5,
+            "value": 1
+        }
+    ],
+    "distances": [
+        [
+            0,
+            382.15786332352235,
+            424.7713032915477,
+            1157.1010642549768,
+            1054.032080204393
+        ],
+        [
+            382.15786332352235,
+            0,
+            533.4581678069987,
+            1119.5875529854734,
+            674.021809884517
+        ],
+        [
+            424.7713032915477,
+            533.4581678069987,
+            0,
+            738.4450267961726,
+            1049.3424075105322
+        ],
+        [
+            1157.1010642549768,
+            1119.5875529854734,
+            738.4450267961726,
+            0,
+            1270.6465098523665
+        ],
+        [
+            1054.032080204393,
+            674.021809884517,
+            1049.3424075105322,
+            1270.6465098523665,
+            0
+        ]
+    ],
+    "time_limit": 3500,
+    "start_point_idx": 0,
+    "finish_point_idx": 0,
+    "solutions": [
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    2,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    2
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            ],
+            "cost": 0.8448752828344785,
+            "best_path_len": 3978.739647983453,
+            "best_path_steps": 5,
+            "best_path_value": 5,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0,
+                "Īsākais ceļš": 0.2367,
+                "Savāktie punkti": 0,
+                "Liekie savienojumi": 0,
+                "Pārtērētais laiks": 0.6081,
+                "Neizmantotais laiks": 0,
+                "Ceļa garums": 3978.7396
+            },
+            "iteration": 1
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    2
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            ],
+            "cost": 0.7545642959509777,
+            "best_path_len": 2110.2117534124322,
+            "best_path_steps": 3,
+            "best_path_value": 3,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0.16,
+                "Īsākais ceļš": 0.1256,
+                "Savāktie punkti": 0.4,
+                "Liekie savienojumi": 0.0064,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0.0626,
+                "Ceļa garums": 2110.2118
+            },
+            "iteration": 19
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    2
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            ],
+            "cost": 0.7497642959509778,
+            "best_path_len": 2110.2117534124322,
+            "best_path_steps": 3,
+            "best_path_value": 3,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0.16,
+                "Īsākais ceļš": 0.1256,
+                "Savāktie punkti": 0.4,
+                "Liekie savienojumi": 0.0016,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0.0626,
+                "Ceļa garums": 2110.2118
+            },
+            "iteration": 20
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    2
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            ],
+            "cost": 0.7481642959509778,
+            "best_path_len": 2110.2117534124322,
+            "best_path_steps": 3,
+            "best_path_value": 3,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0.16,
+                "Īsākais ceļš": 0.1256,
+                "Savāktie punkti": 0.4,
+                "Liekie savienojumi": 0,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0.0626,
+                "Ceļa garums": 2110.2118
+            },
+            "iteration": 22
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    2
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0,
+                    2,
+                    0
+                ]
+            ],
+            "cost": 0.4488887743651867,
+            "best_path_len": 3483.927247315383,
+            "best_path_steps": 4,
+            "best_path_value": 4,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0.04,
+                "Īsākais ceļš": 0.2073,
+                "Savāktie punkti": 0.2,
+                "Liekie savienojumi": 0.0016,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0,
+                "Ceļa garums": 3483.9272
+            },
+            "iteration": 41
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    2
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    2,
+                    0
+                ]
+            ],
+            "cost": 0.4472887743651867,
+            "best_path_len": 3483.927247315383,
+            "best_path_steps": 4,
+            "best_path_value": 4,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0.04,
+                "Īsākais ceļš": 0.2073,
+                "Savāktie punkti": 0.2,
+                "Liekie savienojumi": 0,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0,
+                "Ceļa garums": 3483.9272
+            },
+            "iteration": 49
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    2,
+                    0,
+                    1
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    2,
+                    0
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1,
+                    0
+                ]
+            ],
+            "cost": 0.4212834856303456,
+            "best_path_len": 2811.1621221816704,
+            "best_path_steps": 4,
+            "best_path_value": 4,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0.04,
+                "Īsākais ceļš": 0.1673,
+                "Savāktie punkti": 0.2,
+                "Liekie savienojumi": 0.0064,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0.0076,
+                "Ceļa garums": 2811.1621
+            },
+            "iteration": 66
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    2,
+                    0
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1,
+                    0
+                ]
+            ],
+            "cost": 0.4164834856303456,
+            "best_path_len": 2811.1621221816704,
+            "best_path_steps": 4,
+            "best_path_value": 4,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0.04,
+                "Īsākais ceļš": 0.1673,
+                "Savāktie punkti": 0.2,
+                "Liekie savienojumi": 0.0016,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0.0076,
+                "Ceļa garums": 2811.1621
+            },
+            "iteration": 71
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    2,
+                    0
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            ],
+            "cost": 0.4148834856303456,
+            "best_path_len": 2811.1621221816704,
+            "best_path_steps": 4,
+            "best_path_value": 4,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0.04,
+                "Īsākais ceļš": 0.1673,
+                "Savāktie punkti": 0.2,
+                "Liekie savienojumi": 0,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0.0076,
+                "Ceļa garums": 2811.1621
+            },
+            "iteration": 72
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    2,
+                    0
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            ],
+            "cost": 0.4137418797165485,
+            "best_path_len": 2664.961746396716,
+            "best_path_steps": 4,
+            "best_path_value": 4,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0.04,
+                "Īsākais ceļš": 0.1586,
+                "Savāktie punkti": 0.2,
+                "Liekie savienojumi": 0.0016,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0.0136,
+                "Ceļa garums": 2664.9617
+            },
+            "iteration": 207
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    2,
+                    0
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            ],
+            "cost": 0.41214187971654853,
+            "best_path_len": 2664.961746396716,
+            "best_path_steps": 4,
+            "best_path_value": 4,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0.04,
+                "Īsākais ceļš": 0.1586,
+                "Savāktie punkti": 0.2,
+                "Liekie savienojumi": 0,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0.0136,
+                "Ceļa garums": 2664.9617
+            },
+            "iteration": 209
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1,
+                    2
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    2,
+                    0
+                ]
+            ],
+            "cost": 0.2092525501016713,
+            "best_path_len": 3490.042513148126,
+            "best_path_steps": 5,
+            "best_path_value": 5,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0,
+                "Īsākais ceļš": 0.2077,
+                "Savāktie punkti": 0,
+                "Liekie savienojumi": 0.0016,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0,
+                "Ceļa garums": 3490.0425
+            },
+            "iteration": 241
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    2
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    2,
+                    0
+                ]
+            ],
+            "cost": 0.2076525501016713,
+            "best_path_len": 3490.042513148126,
+            "best_path_steps": 5,
+            "best_path_value": 5,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0,
+                "Īsākais ceļš": 0.2077,
+                "Savāktie punkti": 0,
+                "Liekie savienojumi": 0,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0,
+                "Ceļa garums": 3490.0425
+            },
+            "iteration": 246
+        }
+    ],
+    "num_iterations": 266,
+    "bad_solutions": [
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    2
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    2,
+                    0
+                ]
+            ],
+            "cost": 0.2092525501016713,
+            "best_path_len": 3490.042513148126,
+            "best_path_steps": 5,
+            "best_path_value": 5,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0,
+                "Īsākais ceļš": 0.2077,
+                "Savāktie punkti": 0,
+                "Liekie savienojumi": 0.0016,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0,
+                "Ceļa garums": 3490.0425
+            },
+            "iteration": 256
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    0,
+                    2
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    2,
+                    0
+                ]
+            ],
+            "cost": 0.2092525501016713,
+            "best_path_len": 3490.042513148126,
+            "best_path_steps": 5,
+            "best_path_value": 5,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0,
+                "Īsākais ceļš": 0.2077,
+                "Savāktie punkti": 0,
+                "Liekie savienojumi": 0.0016,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0,
+                "Ceļa garums": 3490.0425
+            },
+            "iteration": 257
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    2
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    2,
+                    0
+                ]
+            ],
+            "cost": 0.2076525501016713,
+            "best_path_len": 3490.042513148126,
+            "best_path_steps": 5,
+            "best_path_value": 5,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0,
+                "Īsākais ceļš": 0.2077,
+                "Savāktie punkti": 0,
+                "Liekie savienojumi": 0,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0,
+                "Ceļa garums": 3490.0425
+            },
+            "iteration": 258
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    2
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0,
+                    2,
+                    0
+                ]
+            ],
+            "cost": 0.2092525501016713,
+            "best_path_len": 3490.042513148126,
+            "best_path_steps": 5,
+            "best_path_value": 5,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0,
+                "Īsākais ceļš": 0.2077,
+                "Savāktie punkti": 0,
+                "Liekie savienojumi": 0.0016,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0,
+                "Ceļa garums": 3490.0425
+            },
+            "iteration": 259
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    2
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    1
+                ],
+                [
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0,
+                    2,
+                    0
+                ]
+            ],
+            "cost": 0.2140525501016713,
+            "best_path_len": 3490.042513148126,
+            "best_path_steps": 5,
+            "best_path_value": 5,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0,
+                "Īsākais ceļš": 0.2077,
+                "Savāktie punkti": 0,
+                "Liekie savienojumi": 0.0064,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0,
+                "Ceļa garums": 3490.0425
+            },
+            "iteration": 260
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    2
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    2,
+                    0
+                ]
+            ],
+            "cost": 0.2076525501016713,
+            "best_path_len": 3490.042513148126,
+            "best_path_steps": 5,
+            "best_path_value": 5,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0,
+                "Īsākais ceļš": 0.2077,
+                "Savāktie punkti": 0,
+                "Liekie savienojumi": 0,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0,
+                "Ceļa garums": 3490.0425
+            },
+            "iteration": 261
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1,
+                    2
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    2,
+                    0
+                ]
+            ],
+            "cost": 0.2140525501016713,
+            "best_path_len": 3490.042513148126,
+            "best_path_steps": 5,
+            "best_path_value": 5,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0,
+                "Īsākais ceļš": 0.2077,
+                "Savāktie punkti": 0,
+                "Liekie savienojumi": 0.0064,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0,
+                "Ceļa garums": 3490.0425
+            },
+            "iteration": 262
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    2
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    2,
+                    0
+                ]
+            ],
+            "cost": 0.2076525501016713,
+            "best_path_len": 3490.042513148126,
+            "best_path_steps": 5,
+            "best_path_value": 5,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0,
+                "Īsākais ceļš": 0.2077,
+                "Savāktie punkti": 0,
+                "Liekie savienojumi": 0,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0,
+                "Ceļa garums": 3490.0425
+            },
+            "iteration": 263
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    2
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    2,
+                    0
+                ]
+            ],
+            "cost": 0.2140525501016713,
+            "best_path_len": 3490.042513148126,
+            "best_path_steps": 5,
+            "best_path_value": 5,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0,
+                "Īsākais ceļš": 0.2077,
+                "Savāktie punkti": 0,
+                "Liekie savienojumi": 0.0064,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0,
+                "Ceļa garums": 3490.0425
+            },
+            "iteration": 264
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    1
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    2
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0,
+                    2,
+                    0
+                ]
+            ],
+            "cost": 0.2140525501016713,
+            "best_path_len": 3490.042513148126,
+            "best_path_steps": 5,
+            "best_path_value": 5,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0,
+                "Īsākais ceļš": 0.2077,
+                "Savāktie punkti": 0,
+                "Liekie savienojumi": 0.0064,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0,
+                "Ceļa garums": 3490.0425
+            },
+            "iteration": 265
+        },
+        {
+            "links": [
+                [
+                    0,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0,
+                    0,
+                    2
+                ],
+                [
+                    2,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    2,
+                    0
+                ]
+            ],
+            "cost": 0.2140525501016713,
+            "best_path_len": 3490.042513148126,
+            "best_path_steps": 5,
+            "best_path_value": 5,
+            "cost_parts": {
+                "Apmeklētās virsotnes": 0,
+                "Īsākais ceļš": 0.2077,
+                "Savāktie punkti": 0,
+                "Liekie savienojumi": 0.0064,
+                "Pārtērētais laiks": 0,
+                "Neizmantotais laiks": 0,
+                "Ceļa garums": 3490.0425
+            },
+            "iteration": 266
+        }
+    ]
+}

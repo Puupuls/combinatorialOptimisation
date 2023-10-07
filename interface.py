@@ -3,7 +3,7 @@ import json
 import flask
 from flask import Flask, request
 
-from my_types import Point
+from my_types import Point, Domain
 from optimizer import create_test_domain, Optimizer
 
 app = Flask(__name__)
@@ -41,6 +41,7 @@ def decrease(idx):
     optimizer.fill_distances()
     domain.solutions = []
     domain.bad_solutions = []
+    domain.num_iterations = 0
     return domain.to_json()
 
 
@@ -52,6 +53,7 @@ def increase(idx):
     optimizer.fill_distances()
     domain.solutions = []
     domain.bad_solutions = []
+    domain.num_iterations = 0
     return domain.to_json()
 
 
@@ -67,6 +69,7 @@ def create():
     optimizer.fill_distances()
     domain.solutions = []
     domain.bad_solutions = []
+    domain.num_iterations = 0
     return domain.to_json()
 
 
@@ -76,7 +79,17 @@ def setDist():
     optimizer.fill_distances()
     domain.solutions = []
     domain.bad_solutions = []
+    domain.num_iterations = 0
     return domain.to_json()
+
+
+@app.route('/load', methods=['post'])
+def load():
+    global optimizer, domain
+    domain = Domain.from_dict(request.json)
+    optimizer = Optimizer(domain)
+    optimizer.solve()
+    return optimizer.domain.to_json()
 
 
 @app.route('/reset')
@@ -85,6 +98,14 @@ def reset():
     domain = create_test_domain()
     optimizer = Optimizer(domain)
     optimizer.solve()
+    return optimizer.domain.to_json()
+
+
+@app.route('/reset_solutions')
+def reset_solutions():
+    domain.num_iterations = 0
+    domain.solutions = []
+    domain.bad_solutions = []
     return optimizer.domain.to_json()
 
 

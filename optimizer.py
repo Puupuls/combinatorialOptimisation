@@ -224,13 +224,13 @@ class Optimizer(Thread):
         #   izvelkam sakni, lai ievērojami sodītu par pārtērēto
         overtime_penalty = overtime_penalty ** 0.25
         #   kāpinam, lai ļautu būt nedaudz zem atvēlētā laika un par to sodītu mazāk
-        undertime_penalty = undertime_penalty ** 3
+        # undertime_penalty = undertime_penalty ** 3
         #   kāpinam lai samazinātu ietekmi, jo vērtība vairāk vai mazāk dublē point_goal
         node_goal = node_goal ** 2
         #   kāpinam lai samazinātu ietekmi, jo neļauj modelim izvēlēties labus ceļus ja ir lieki posmi
         spare_links = spare_links ** 2
 
-        solution.cost = node_goal + dist_goal + point_goal + spare_links + overtime_penalty + undertime_penalty
+        solution.cost = node_goal + dist_goal + point_goal + spare_links + overtime_penalty  # + undertime_penalty
         solution.cost_parts = {
             "Apmeklētās virsotnes": round(node_goal, 4),
             "Īsākais ceļš": round(dist_goal, 4),
@@ -238,18 +238,20 @@ class Optimizer(Thread):
             # "Liekā distance": round(spare_dist_goal, 4),
             "Liekie savienojumi": round(spare_links, 4),
             "Pārtērētais laiks": round(overtime_penalty, 4),
-            "Neizmantotais laiks": round(undertime_penalty, 4),
+            # "Neizmantotais laiks": round(undertime_penalty, 4),
             "Ceļa garums": round(solution.best_path_len, 4)
         }
 
     def solve(self):
         if len(self.domain.points) < 2:
             return
+        self.domain.num_iterations += 1
         if len(self.domain.solutions) == 0:
             # Ja vel nav risinājumu, iegūstam sākotnējo risinājumu
             solution = self.get_starting_solution()
             self.build_graph(solution)
             self.evaluate_solution(solution)
+            solution.iteration = self.domain.num_iterations
             self.domain.solutions.append(solution)
         else:
             if len(self.domain.bad_solutions) > 10 and random.random() > 0.005:
@@ -271,6 +273,7 @@ class Optimizer(Thread):
 
             # Ja labākais grupā nedod pienesumu, pievienojam neveiksmīgajiem
             # Citādi pievienojam kā jaunu labāko risinājumu
+            best_solution.iteration = self.domain.num_iterations
             if best_solution.cost < self.domain.solutions[-1].cost:
                 self.domain.solutions.append(best_solution)
                 self.domain.bad_solutions = []

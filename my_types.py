@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+
 from dataclasses_json import dataclass_json
 
 
@@ -22,6 +23,7 @@ class Domain:
     start_point_idx: int = 0
     finish_point_idx: int = 0
     solutions: list[Solution] = field(default_factory=list)
+    num_iterations: int = 0
     bad_solutions: list[Solution] = field(default_factory=list)
 
 
@@ -41,3 +43,4 @@ class Solution:
     best_path_steps: int = 0
     best_path_value: float = 0
     cost_parts: dict[str, float] = field(default_factory=dict)
+    iteration: int = 0

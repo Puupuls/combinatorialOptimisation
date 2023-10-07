@@ -1,6 +1,6 @@
 # Solution for University of Latvia Combinatorial Optimisation course
 
-## Task:
+## Uzdevums:
 
 > Ir doti n punkti, kur katram ir noteikta vērtība v[i].
 > Ir dots sākuma punkts s un finiša punkts f (vai tas ir tas pats?).
@@ -8,8 +8,9 @@
 > Uzdevums ir atrast tādu punktu virkni, kas sākas punktā s un beidzas punktā f un dod vislielāko vērtību, bet prasa ne vairāk laika kā dotais limits t.
 
 
-## Run:
+## Palaišana:
 ```bash
 docker build --tag 'puupuls-co' .
 docker run -d -p 5000:5000 puupuls-co
 ```
+Pārlūkprogrammā jāatver: http://localhost:5000
